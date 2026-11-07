@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0f0f0f">
+  <meta name="description" content="A clean, lightweight YouTube search page.">
+  <title>YouTube Search</title>
+  <style>
+    :root { color-scheme: dark; --bg:#0f0f0f; --line:#303030; --muted:#aaa; --text:#f1f1f1; --red:#ff0033; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; background:var(--bg); color:var(--text); font:15px/1.5 Arial,Helvetica,sans-serif; }
+    header { position:sticky; top:0; z-index:2; display:flex; align-items:center; gap:24px; padding:14px clamp(16px,4vw,56px); background:rgba(15,15,15,.96); border-bottom:1px solid #242424; }
+    .brand { display:flex; align-items:center; gap:10px; color:var(--text); text-decoration:none; font-size:20px; font-weight:700; white-space:nowrap; }
+    .play { display:grid; place-items:center; width:34px; height:24px; border-radius:8px; background:var(--red); color:white; font-size:14px; }
+    form { display:flex; width:min(680px,100%); margin:auto; }
+    input { min-width:0; flex:1; padding:12px 18px; color:var(--text); background:#121212; border:1px solid #3a3a3a; border-right:0; border-radius:24px 0 0 24px; outline:none; font-size:16px; }
+    input:focus { border-color:#3ea6ff; }
+    button { padding:0 22px; border:1px solid #3a3a3a; border-radius:0 24px 24px 0; background:#282828; color:var(--text); cursor:pointer; font-size:15px; }
+    button:hover { background:#383838; }
+    main { width:min(980px,calc(100% - 32px)); margin:70px auto; }
+    .hero { text-align:center; margin:0 auto 36px; }
+    h1 { margin:0 0 8px; font-size:clamp(30px,5vw,48px); letter-spacing:-1.5px; }
+    .subtitle { margin:0; color:var(--muted); font-size:16px; }
+    .search-card { max-width:760px; margin:28px auto 0; }
+    .quick { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-top:22px; }
+    .chip { border:1px solid #353535; border-radius:18px; padding:7px 13px; background:#202020; color:#ddd; cursor:pointer; font-size:13px; }
+    .chip:hover { background:#303030; }
+    .notice { max-width:760px; margin:58px auto 0; padding:16px 18px; border:1px solid #303030; border-radius:12px; background:#171717; color:#aaa; font-size:13px; }
+    .notice strong { color:#ddd; }
+    footer { padding:20px; text-align:center; color:#777; font-size:12px; }
+    @media(max-width:600px) { header { gap:12px; padding:12px; } .brand span:last-child { display:none; } main { margin-top:48px; } form input { padding:11px 13px; } form button { padding:0 15px; } }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="brand" href="./" aria-label="YouTube Search home"><span class="play">▶</span><span>YouTube Search</span></a>
+    <form id="header-search" role="search">
+      <input id="header-query" type="search" placeholder="Search videos" aria-label="Search videos" autocomplete="off">
+      <button type="submit" aria-label="Search">Search</button>
+    </form>
+  </header>
+  <main>
+    <section class="hero">
+      <h1>Find your next video.</h1>
+      <p class="subtitle">Search YouTube videos, channels, tutorials, music, and more.</p>
+      <div class="search-card">
+        <form id="main-search" role="search">
+          <input id="main-query" type="search" placeholder="What do you want to watch?" aria-label="What do you want to watch?" autocomplete="off" autofocus>
+          <button type="submit">Search</button>
+        </form>
+        <div class="quick" aria-label="Popular searches">
+          <button class="chip" type="button" data-query="programming tutorials">Programming</button>
+          <button class="chip" type="button" data-query="physics explained">Physics</button>
+          <button class="chip" type="button" data-query="math olympiad">Math</button>
+          <button class="chip" type="button" data-query="tennis highlights">Tennis</button>
+          <button class="chip" type="button" data-query="classical music">Classical music</button>
+        </div>
+      </div>
+    </section>
+    <aside class="notice">
+      <strong>About this page:</strong> This is a standalone HTML search interface. Search opens YouTube's own results page. The Scramjet repository's browser runtime and service worker are separate build assets; this root HTML file does not itself initialize a Scramjet proxy or connect to a WSS server.
+    </aside>
+  </main>
+  <footer>Independent search interface · YouTube is a trademark of Google LLC.</footer>
+  <script>
+    function searchYouTube(value) {
+      const query = value.trim();
+      if (!query) return;
+      const destination = "https://www.youtube.com/results?search_query=" + encodeURIComponent(query);
+      window.location.assign(destination);
+    }
+    document.getElementById("header-search").addEventListener("submit", function (event) {
+      event.preventDefault();
+      searchYouTube(document.getElementById("header-query").value);
+    });
+    document.getElementById("main-search").addEventListener("submit", function (event) {
+      event.preventDefault();
+      searchYouTube(document.getElementById("main-query").value);
+    });
+    document.querySelectorAll("[data-query]").forEach(function (chip) {
+      chip.addEventListener("click", function () {
+        searchYouTube(chip.dataset.query);
+      });
+    });
+  </script>
+</body>
+</html>
